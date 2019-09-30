@@ -1,15 +1,12 @@
 import time
 import sys
 import praw
-import re as reeeeeeeeee
 from webhooks import *
 from replies import *
 from DM2_CommonUtils import hours_since
 from DM2_CommonUtils import get_reddit_instance
 from spazutils import Usernotes
-#from blacklist import black_list
 import requests
-#import unicode
 import pprint
 from modmaillists import *
 reddit = get_reddit_instance("")
@@ -30,6 +27,7 @@ thank_list = ["thank you", "thanks!", "thanks", "thank you!"]
 
 while True:
     try:
+        #Look through all modmail messages
         for x in sub.modmail.conversations(state="all", limit=1000):
             userlower = "this is here so if the below part throws an exception it doesnt ruin everything"
             try:
@@ -37,15 +35,16 @@ while True:
                 userlower = (str(test.name).lower())
             except Exception as e: 
                 print(f"{e} {x.id}")
+                #if message is automated notification, forward to discord and archive
                 if "A /r/dankmemes submission has been removed!" in x.subject:
                     print('automod removal')
                     for message in x.messages:
                         sub.modmail(x.id).archive()
                         requests.post(webhook1, data={"content":"New automod removal: https://mod.reddit.com/mail/all/"+(x.id)+"\n**Post Link**:  \n"+(message.body_markdown)})
                 else:pass
+            #open blacklist
             with open('blacklist', 'r') as f:
                 blacklist = f.read().split('\n')
-                print('i got here!')
             for message in x.messages:
                 lowerx2_list = message.body_markdown.lower().split(" ")
             with open('urgent', 'r') as f:
@@ -53,9 +52,7 @@ while True:
             lowerx_list = x.subject.lower().split(" ")
             thankyou_list = ["thank you!"]
             lowerbody = message.body_markdown
-
-#            print(message.is_internal)
-
+            #This part of the code handles urgent messages like doxxing and threats
             if x.id in urgentid:
                 dankmemesmods_list = ["dankmemesmods", "DankMemesMods"]
                 if "!urgent" in message.body_markdown:
@@ -133,7 +130,7 @@ while True:
                             subredditUsernotes = Usernotes(reddit=reddit, subreddit=sub)
                             usertonote = str(x.user)
                             permalink = ("https://mod.reddit.com/mail/all/"+x.id)
-                            #print(x.user.ban_reason)
+                            
                             #subredditUsernotes.addUsernote(user=reddit.redditor(usertonote), note="unbanned", thing=permalink, subreddit=sub, warningType="ban")
                             print("usernoted " + str(x.user))
                         else:
@@ -170,24 +167,7 @@ while True:
                         print("reported")
 
                     else:print(f"nothing to do with{x.id}")
-                    
-
-                    
-            
-            #elif message.body_markdown is "thank you!":
-            #    print("found a thanker")
-           #     if message.author is x.user:
-           #         x.reply("We have detected your message is thanking us. No problem! your message has been automatically archived to lessen our workload. if your issue isn't resolved, reply again so we'll see it again. have a nice day! *beep boop*")
-            #        x.archive()
-            #elif message.body_markdown in mute_list:
-            
-
-#
-            #        for convo in x.user.recent_convos:
-            #            print("https://mod.reddit.com/mail/all/"+ convo.id)
-            #            sub.modmail(x.id).reply("https://mod.reddit.com/mail/all/"+ convo.id, author_hidden=False, internal=True)
-
-            else:
+                else:
                 pass
     
     except Exception as e: 
