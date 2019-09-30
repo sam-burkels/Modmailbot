@@ -11,7 +11,6 @@ import pprint
 from modmaillists import *
 reddit = get_reddit_instance("")
 sub = reddit.subreddit('')
-##########################################################PUT THIS IN MODMAILLISTS####################################################################################################################################
 word = "karma"
 removal_list = ["A /r/dankmemes submission has been removed!"]
 dox_list = ["phone number", "dox", "my address", "brigading", "brigade"]
@@ -19,7 +18,7 @@ ban_list = ["banned", "ban", "unban"]
 bancommand_list = ["!ban"]
 thank_list = ["thank you", "thanks!", "thanks", "thank you!"]
 
-####################################################################################################################################################################################################################
+
 
 
 
@@ -72,7 +71,7 @@ while True:
             elif message.body_markdown in mute_list:
                 if message.author in reddit.subreddit('dankmemes').moderator():
                     print("found a mute?")
-                    #sub.modmail(x.id).reply("archiving this, because the user was muted.", author_hidden=False, internal=True)
+                    sub.modmail(x.id).reply("archiving this, because the user was muted.", author_hidden=False, internal=True)
                     sub.modmail(x.id).archive()
                     print("done!")
                 else: print("uhhh>")
@@ -126,7 +125,7 @@ while True:
                             print('unbanning user. give me a second.')
                             sub.banned.remove(x.user)
                             x.reply("User has been unbanned!",author_hidden= False, internal= True)
-                            #x.reply("Your permanent ban has been revoked.\n\n Your name has a flag next it. This is your FINAL chance. If you do this again, you will be banned permanently.", author_hidden =True, internal=False)
+                            x.reply("Your permanent ban has been revoked.\n\n Your name has a flag next it. This is your FINAL chance. If you do this again, you will be banned permanently.", author_hidden =True, internal=False)
                             subredditUsernotes = Usernotes(reddit=reddit, subreddit=sub)
                             usertonote = str(x.user)
                             permalink = ("https://mod.reddit.com/mail/all/"+x.id)
@@ -146,12 +145,12 @@ while True:
                             subredditUsernotes = Usernotes(reddit=reddit, subreddit=sub)
                             usertonote = str(x.user)
                             permalink = ("https://mod.reddit.com/mail/all/"+x.id)
-                            #print(x.user.ban_reason)
-                            #subredditUsernotes.addUsernote(user=reddit.redditor(usertonote), note="unbanned", thing=permalink, subreddit=sub, warningType="ban")
+                            print(x.user.ban_reason)
+                            subredditUsernotes.addUsernote(user=reddit.redditor(usertonote), note="unbanned", thing=permalink, subreddit=sub, warningType="ban")
                             print("usernoted " + str(x.user))
                             x.archive()
                         else:
-                            x.reply("Error! user is either not banned, or something is broken. let sloth know if this user is still banned", author_hidden=False, internal=True)
+                            x.reply("Error! user is either not banned, or something is broken. let me know if this user is still banned", author_hidden=False, internal=True)
                             print(x.user)
                     elif message.body_markdown in permamute_list:
                         if not userlower in blacklist:
@@ -161,6 +160,7 @@ while True:
                         else:
                             x.reply("Error! user is  already muted", author_hidden=False, internal=True)
                             print(x.user)
+                    #automatically report a user to site administration for harassment
                     elif message.body_markdown in report_list:
                         reddit.subreddit('reddit.com').message("Modmail abuse", "Hi!\n\n /u/"+ str(x.user)+ " is abusing our modmail. \n\n here's a link: \n\n https://mod.reddit.com/mail/perma/"+(x.id)+"\n\n this message was generated automatically. contact u/sloth_on_meth for questions")
                         x.reply("reported user to site admins.", author_hidden=False, internal=True)
